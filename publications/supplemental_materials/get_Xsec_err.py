@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from interpolate_ff import *
 
 #This code defines the H(e,e'p) elastic cross section in terms of
@@ -65,12 +66,20 @@ def sig(kf, th_e, Q2, GEp_GD, GMp_muGD, dGEp_GD, dGMp_muGD):
 #final e- momentum (kf) [GeV]
 #final e- angle (th_e) [deg]
 
-Eb = 5.00875
-Q2 = 3.5 
-th_e = 27.33
+Eb = 2.070
+th_e = np.linspace(20,16,100)
+kf = np.linspace(1.8,1.9,100)
+Q2 = 4*Eb*kf* pow(np.sin( th_e/2. * dtr), 2)
+#th_e = 2.*asin( np.sqrt(Q2/(4.*Eb*kf))) / dtr # deg
+#kf = Q2 / ( 4. * Eb * pow(np.sin( th_e/2. * dtr), 2) )
 
-kf = Q2 / ( 4. * Eb * pow(np.sin( th_e/2. * dtr), 2) )  #GeV
+#Q2 = np.linspace(0.36, 0.42, 100) # generate equally spaced Q2 points
 
+#th_e = np.linspace(17.4, 19.2, 100)                          # select ~ central e- angle based on distribution (this is an approximation)
+#kf = np.linspace(1.82, 1.9, 100)  # calculate e- scattering angle [GeV]
+#kf = Q2 / ( 4. * Eb * pow(np.sin( th_e/2. * dtr), 2) )
+
+nu = Eb-kf  # energy transfer [GeV]
 
 #Get the numerical values of the fofa uncertainties from JRA parametrization interpolation (see interpolate_ff.py)
 GEp_GD = get_GEp_GD(Q2)
@@ -86,6 +95,9 @@ print('Q2 = ', Q2, ' [GeV^2]')
 print('e- Beam Energy (Eb) = ', Eb, ' [GeV]')
 print('e- momentum (kf) = ', kf, ' [GeV/c]')
 print('e- angle (th_e) = ', th_e, ' [deg]')
+print('e- Energy Transfer (nu) = ', nu, ' [GeV]')
 print('Xsec (ub/sr) = ',Xsec,' +/- ',Xsec_err, ' [microbarn/sr]')
 print('Xsec_rel_err=', Xsec_rel_err, ' [%]' )
 
+plt.errorbar(nu, Xsec, Xsec_err, marker='', linestyle='--', color='r')
+plt.show()
